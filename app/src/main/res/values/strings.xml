@@ -1,0 +1,83 @@
+<resources>
+    <string name="reward_spin" translatable="false">Spin</string>
+    <string name="reward_roll" translatable="false">Lucky Roll</string>
+    <string name="reward_bounty_task" translatable="false">Bounty Task</string>
+    <string name="reward_free_gift" translatable="false">Free Gift</string>
+    <string name="get_your_first_reward">Get your first reward</string>
+    <string name="participate_in_a_raffle">Participate in a Raffle</string>
+    <string name="total_reward" translatable="false">TOTAL\nREWARD\n$%s</string>
+    <string name="item_audience_content">%s became your audience.</string>
+    <string name="claps_received">Claps Received</string>
+    <string name="game_center">Game Center</string>
+    <string name="gave_a_clap_for_this_content">gave a Clap for this content.</string>
+    <string name="discover">Discover</string>
+    <string name="search_youtube">Search</string>
+    <string name="no_audiences_yet">No audiences yet</string>
+    <string name="no_claps_yet">No Claps yet</string>
+    <string name="publish_videos_to_gain_more_audience">Publish videos to gain more audience!</string>
+    <string name="publish_your_videos_to_gain_more_claps">Publish your videos to gain more Claps!</string>
+    <string name="reasons_for_recommendation">Reasons for recommendation(Optional)</string>
+    <string name="people_joined">People joined </string>
+    <string name="category">Category</string>
+    <string name="your_audience">Your Audience</string>
+    <string name="Do_U_like_this_video">Do you like this video?</string>
+    <string name="Bookmark_to_my_personal_page">Bookmark to my personal page</string>
+
+    <string name="Play_video_and_claim_the_chest">Play video and claim the chest</string>
+
+    <string name="Daily_Chest">Daily Chest</string>
+
+    <string name="DESCRIPTION">DESCRIPTION</string>
+
+    <string name="What_does_this_number_mean">What does this number mean?</string>
+
+    <string name="This_number_represents_your_audience_and_fans">This number represents your audience and fans.</string>
+
+    <string name="What_is_audience">What is audience？</string>
+
+    <string name="How_can_I_get_more_audiences">How can I get more audiences?</string>
+
+    <string name="Publish_YouTube_content_to_ClipClaps">Publish YouTube content to ClipClaps</string>
+
+    <string name="Publish_contents_from_a_specific_category">Publish contents from a specific category</string>
+
+    <string name="Publish_contents_of_high_quality">Publish contents of high quality</string>
+
+    <string name="You_can_become_a_VIP_content_creator_by_publishing_high_quality_content">You can become a VIP content creator by publishing high quality content</string>
+
+    <string name="illegal">Illegal</string>
+    <string name="pronography">Pronography</string>
+    <string name="spamming">Spamming</string>
+    <string name="gambling_fraud">Gambling &amp; Fraud</string>
+    <string name="verbal_abuse">Verbal Abuse</string>
+    <string name="privacy_violation">Privacy Violation</string>
+    <string name="solicitation">Solicitation</string>
+    <string name="irrelevant">Irrelevant</string>
+    <string name="danger_to_minors">Danger to Minors</string>
+
+    <string name="You_are_banned_for_comment_violation">You are banned for comment violation</string>
+    <string name="Gift_Card">Gift Card</string>
+    <string name="After_a_successful_withdrawal">After a successful withdrawal, your coupon code will be sent to your email.</string>
+    <string name="INVITING_NEW_USERS_IS_THE_FASTEST_WAY_TO_EARN_CLAPCOINS">INVITING NEW USERS IS THE FASTEST WAY TO EARN CLAPCOINS</string>
+    <string name="Receive_at_least_with_each_invite">Receive at least $0.1 with each invite, plus chances to win cash prize in our cash raffies.</string>
+
+
+    <string name="Episode">Episode %d</string>
+    <string name="Episode_finished">Finished, %d episodes</string>
+    <string name="Episode_on_going">Ongoing, updated %d episodes</string>
+    <string name="finished">Finished</string>
+    <string name="on_going">Ongoing</string>
+    <string name="just_updated">just updated</string>
+    <string name="enter">Enter</string>
+    <string name="see_more">See More</string>
+
+    <string name="trending">Trending</string>
+    <string name="most_viewed">Most Viewed</string>
+    <string name="newest">New</string>
+
+
+    <string name="no_more_data">No more data</string>
+    <string name="load_failed">load more failed</string>
+    <string name="loading">Loading…</string>
+
+</resources>

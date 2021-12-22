@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><!--<com.zj.viewtest.partition.util.nest.NestScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    android:id="@+id/component_channel_tab_nest"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+<!--    app:layout_scrollFlags="scroll|exitUntilCollapsed">-->
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/component_channel_tab_ll_container"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical" />-->
+
+<!--</com.zj.viewtest.partition.util.nest.NestScrollView>-->
+
+
+<com.zj.viewtest.partition.util.NestLoadMoreRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/component_channel_tab_nest_rv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>

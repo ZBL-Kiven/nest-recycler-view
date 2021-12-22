@@ -1,0 +1,33 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext {
+        kotlin_version = '1.5.10'
+    }
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        maven {
+            credentials {
+                username 'iRqFxj'
+                password 'fMTKbe0WP6'
+            }
+            url 'https://repo.rdc.aliyun.com/repository/129757-release-BhhDH6/'
+        }
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/item_video_thumb"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/component_skeleton_bg_default"
+        app:layout_constraintDimensionRatio="164:98"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearance="@style/Normal_12_ImageView" />
+
+    <View
+        android:id="@+id/item_video_mask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:background="@drawable/component_item_mask"
+        app:layout_constraintBottom_toBottomOf="@id/item_video_thumb"
+        app:layout_constraintEnd_toEndOf="@id/item_video_thumb"
+        app:layout_constraintStart_toStartOf="@id/item_video_thumb"
+        app:layout_constraintTop_toTopOf="@id/item_video_thumb" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_video_watch_icon"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="6dp"
+        android:src="@drawable/icon_watch"
+        app:layout_constraintBottom_toBottomOf="@id/item_video_thumb"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_video_watch_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:includeFontPadding="false"
+        android:textColor="#fff"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/item_video_watch_icon"
+        app:layout_constraintStart_toEndOf="@id/item_video_watch_icon"
+        app:layout_constraintTop_toTopOf="@id/item_video_watch_icon"
+        tools:ignore="SmallSp"
+        tools:text="3.6k" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_video_clap_icon"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="6dp"
+        android:src="@drawable/icon_clap"
+        app:layout_constraintBottom_toBottomOf="@id/item_video_thumb"
+        app:layout_constraintStart_toEndOf="@id/item_video_watch_num" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_video_clap_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:includeFontPadding="false"
+        android:textColor="#fff"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/item_video_clap_icon"
+        app:layout_constraintStart_toEndOf="@id/item_video_clap_icon"
+        app:layout_constraintTop_toTopOf="@id/item_video_clap_icon"
+        tools:ignore="SmallSp"
+        tools:text="2328" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_video_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:includeFontPadding="false"
+        android:textColor="#fff"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/item_video_watch_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/item_video_watch_icon"
+        tools:ignore="SmallSp"
+        tools:text="1:17" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_video_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="#333"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_video_thumb"
+        tools:text="New study paints a dire picture for are…" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_video_from"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="#A3A7BC"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_video_title"
+        tools:ignore="SmallSp"
+        tools:text="channel 1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.zj.viewtest.partition.widget.PartitionDetailTopBgView
+        android:id="@+id/main_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="222dp"
+        android:background="@drawable/ic_luck_time_game_replace_img" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/main_tab"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/component_tab_bg"
+        app:tabGravity="fill"
+        app:tabIndicator="@drawable/component_tab_indicator_bg"
+        app:tabIndicatorColor="#fff"
+        app:tabIndicatorFullWidth="true"
+        app:tabIndicatorGravity="center"
+        app:tabIndicatorHeight="28dp"
+        app:tabMode="fixed"
+        app:tabRippleColor="#0000"
+        app:tabSelectedTextColor="#333"
+        app:tabTextAppearance="@style/TabLayoutTextStyle"
+        app:tabTextColor="#555" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/main_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:overScrollMode="never" />
+
+    <!--    <com.zj.loading.BaseLoadingView-->
+    <!--        android:id="@+id/blv"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        app:hintColor="#000"-->
+    <!--        app:hintTextSize="15sp"-->
+    <!--        app:loadingText="LOADING.."-->
+    <!--        app:noDataText="NO DATA"-->
+    <!--        app:refreshEnable="true" />-->
+</LinearLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/component_discover_episode_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#333"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Recent Trend" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/component_discover_episode_just_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="@string/just_updated"
+        android:textColor="#7a7a7a"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/component_discover_episode_title" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/component_discover_episode_enter"
+        android:layout_width="89dp"
+        android:layout_height="30dp"
+        android:background="@drawable/component_descover_enter_bg"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/enter"
+        android:textColor="#fea30f"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/component_discover_episode_just_update"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/component_discover_episode_title" />
+
+    <com.zj.views.list.views.EmptyRecyclerView
+        android:id="@+id/component_discover_rv_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/component_discover_episode_just_update"
+        app:spanCount="3"
+        tools:itemCount="6"
+        tools:listitem="@layout/item_episodes" />
+
+    <View
+        android:id="@id/component_ending_line"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_marginTop="16dp"
+        android:background="#ddd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/component_discover_rv_container" />
+
+</merge>

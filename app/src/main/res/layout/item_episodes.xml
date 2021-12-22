@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    tools:layout_width="109dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/item_episodes_thumb"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/component_skeleton_bg_default"
+        app:layout_constraintDimensionRatio="109:148"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearance="@style/Normal_12_ImageView" />
+
+    <View
+        android:id="@+id/item_episodes_mask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/component_item_mask"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/item_episodes_thumb"
+        app:layout_constraintEnd_toEndOf="@id/item_episodes_thumb"
+        app:layout_constraintStart_toStartOf="@id/item_episodes_thumb"
+        app:layout_constraintTop_toTopOf="@id/item_episodes_thumb" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_episodes_fav_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_episode_like_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_episodes_watch_icon"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="6dp"
+        android:src="@drawable/icon_watch"
+        app:layout_constraintBottom_toBottomOf="@id/item_episodes_thumb"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_episodes_watch_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:includeFontPadding="false"
+        android:textColor="#fff"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/item_episodes_watch_icon"
+        app:layout_constraintStart_toEndOf="@id/item_episodes_watch_icon"
+        app:layout_constraintTop_toTopOf="@id/item_episodes_watch_icon"
+        tools:ignore="SmallSp"
+        tools:text="3.6k" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_episodes_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="#333"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_episodes_thumb"
+        tools:text="New study paiti dsflslkfj" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_episodes_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="2"
+        android:textColor="#A3A7BC"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_episodes_title"
+        tools:ignore="SmallSp"
+        tools:text="Finished ,23 episode" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_episodes_from"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="#A3A7BC"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_episodes_desc"
+        tools:ignore="SmallSp"
+        tools:text="channel 1" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
