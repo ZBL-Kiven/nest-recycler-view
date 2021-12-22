@@ -415,67 +415,73 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                 lastClickAvailable = false
             }
         }
-        val v1 = MotionEvent.obtainNoHistory(ev)
+        val v1 = MotionEvent.obtain(ev)
         v1.offsetLocation(-ev.x + ev.rawX, -ev.y + ev.rawY)
-        when (ev.action) {
-            MotionEvent.ACTION_DOWN -> {
-                downX = v1.x;downY = v1.y;lastRawX = v1.x; lastRawY = v1.y; lastDy = 0f;interceptNextEvent = true
-                curOrientation = -1
-                overScrollerFilling.onEventDown(v1)
-                return NestEvent.CONSUMED
-            }
-            MotionEvent.ACTION_MOVE -> {
-                if (needRefreshDownIndexByPointerChange) {
-                    v1.action = MotionEvent.ACTION_DOWN
-                    needRefreshDownIndexByPointerChange = false
-                    return dispatchEvent(v1, actionViewMask)
+        try {
+            when (ev.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = v1.x;downY = v1.y;lastRawX = v1.x; lastRawY = v1.y; lastDy = 0f;interceptNextEvent = true
+                    curOrientation = -1
+                    overScrollerFilling.onEventDown(v1)
+                    return NestEvent.CONSUMED
                 }
-                if (v1.pointerCount > 1) return NestEvent.CONSUMED
-                val sameOrientation = parseCurOrientation(lastRawX - v1.x, lastRawY - v1.y)
-                val dx: Float
-                val dy: Float
-                if (getOrientation() == VERTICAL) {
-                    if (sameOrientation) {
-                        dx = -v1.x;dy = 0f
-                    } else {
-                        dx = 0f;dy = -v1.y
+                MotionEvent.ACTION_MOVE -> {
+                    if (needRefreshDownIndexByPointerChange) {
+                        v1.action = MotionEvent.ACTION_DOWN
+                        needRefreshDownIndexByPointerChange = false
+                        return dispatchEvent(v1, actionViewMask)
                     }
-                } else {
-                    if (sameOrientation) {
-                        dx = 0f;dy = -v1.y
-                    } else {
-                        dx = -v1.x;dy = 0f
-                    }
-                }
-                v1.offsetLocation(dx, dy)
-                if (!sameOrientation) {
-                    return NestEvent.PASS
-                }
-                if (curOrientation != -1) {
-                    lastClickAvailable = false
-                    try {
-                        lastDy = lastRawY - v1.y
-                        val ldy = lastDy.roundToInt()
-                        if (ldy != 0) {
-                            overScrollerFilling.onEventMove(v1)
-                            return scroll(ldy, true)
+                    if (v1.pointerCount > 1) return NestEvent.CONSUMED
+                    val sameOrientation = parseCurOrientation(lastRawX - v1.x, lastRawY - v1.y)
+                    val dx: Float
+                    val dy: Float
+                    if (getOrientation() == VERTICAL) {
+                        if (sameOrientation) {
+                            dx = -v1.x;dy = 0f
+                        } else {
+                            dx = 0f;dy = -v1.y
                         }
-                    } finally {
-                        lastRawX = v1.x;lastRawY = v1.y
+                    } else {
+                        if (sameOrientation) {
+                            dx = 0f;dy = -v1.y
+                        } else {
+                            dx = -v1.x;dy = 0f
+                        }
+                    }
+                    v1.offsetLocation(dx, dy)
+                    if (!sameOrientation) {
+                        return NestEvent.PASS
+                    }
+                    if (curOrientation != -1) {
+                        lastClickAvailable = false
+                        try {
+                            lastDy = lastRawY - v1.y
+                            val ldy = lastDy.roundToInt()
+                            if (ldy != 0) {
+                                overScrollerFilling.onEventMove(v1)
+                                return scroll(ldy, true)
+                            }
+                        } finally {
+                            lastRawX = v1.x;lastRawY = v1.y
+                        }
                     }
                 }
-            }
-            MotionEvent.ACTION_UP -> {
-                mHandler.removeMessages(checkSnapPendingCode)
-                if (curOrientation == -1 && max(abs(downX - lastRawX), abs(downY - lastRawY)) < mTouchSlop) {
-                    overScrollerFilling.clear()
-                    return if (lastClickAvailable) NestEvent.CLICK else NestEvent.CONSUMED
+                MotionEvent.ACTION_UP -> {
+                    if (curOrientation == -1 && max(abs(downX - lastRawX), abs(downY - lastRawY)) < mTouchSlop) {
+                        overScrollerFilling.clear()
+                        return if (lastClickAvailable) NestEvent.CLICK else NestEvent.CONSUMED
+                    }
+                    overScrollerFilling.onEventUp(v1)
+                    if (overScroller.isFinished) {
+                        mHandler.removeMessages(checkSnapPendingCode)
+                        mHandler.sendEmptyMessageDelayed(checkSnapPendingCode, 150)
+                    }
+                    inTouchMode = false;lastRawY = 0f;lastRawX = 0f;lastDy = 0f; downX = 0f;downY = 0f;lastMaskedActionView = -1
+                    return if (curOrientation == getOrientation()) NestEvent.CONSUMED else NestEvent.PASS
                 }
-                overScrollerFilling.onEventUp(v1)
-                mHandler.sendEmptyMessageDelayed(checkSnapPendingCode, 150)
-                inTouchMode = false;lastRawY = 0f;lastRawX = 0f;lastDy = 0f; downX = 0f;downY = 0f;lastMaskedActionView = -1
-                return if (curOrientation == getOrientation()) NestEvent.CONSUMED else NestEvent.PASS
             }
+        } finally {
+            v1.recycle()
         }
         return NestEvent.PASS
     }
@@ -502,7 +508,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                         target.scrollBy(0, dy)
                         NestEvent.PASS
                     } else {
-                        overScrollerFilling.clear()
+                        abortScroller()
                         NestEvent.FOCUS
                     }
                 }
@@ -516,7 +522,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                         scrollBy(0, dy)
                         NestEvent.CONSUMED
                     } else {
-                        overScrollerFilling.clear()
+                        abortScroller()
                         NestEvent.FOCUS
                     }
                 }
@@ -660,9 +666,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
         }
 
         private fun addMovement(event: MotionEvent) {
-            val vte = MotionEvent.obtain(event)
-            mVelocityTracker.addMovement(vte)
-            vte.recycle()
+            mVelocityTracker.addMovement(event)
         }
 
         fun onEventDown(event: MotionEvent) {
