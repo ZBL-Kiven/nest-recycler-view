@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import android.view.View.OnTouchListener
 import android.view.animation.LinearInterpolator
@@ -140,29 +139,39 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
      * The processing here will satisfy whether there is a sliding processing of the linkage head at the top.
      * And handle the ScrollFlag.SNAP event in [MotionEvent.ACTION_UP].
      * */
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+    final override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
 
         fun updateForNewEvent(ps: NestEvent) {
             if (lastFocusMod != ps) {
-                val ev1 = MotionEvent.obtain(ev)
+                val ev1 = MotionEvent.obtainNoHistory(ev)
                 ev1.action = MotionEvent.ACTION_CANCEL
                 super.dispatchTouchEvent(ev1)
                 val ev2 = MotionEvent.obtainNoHistory(ev)
                 ev2.action = MotionEvent.ACTION_DOWN
                 super.dispatchTouchEvent(ev2)
+                ev1.recycle()
+                ev2.recycle()
             }
         }
 
         val ps = dispatchEvent(ev ?: return super.dispatchTouchEvent(ev), hashCode())
         return try {
+            if (ps != NestEvent.CONSUMED && unConsumedEvent(ps.outer, lastFocusMod != ps, ev)) {
+                return true
+            }
             when (ps) {
-                NestEvent.CONSUMED -> true
-                NestEvent.FOCUS, NestEvent.PASS -> {
-                    if (lastClickAvailable) updateForNewEvent(ps)
-                    super.dispatchTouchEvent(ev)
+                NestEvent.FOCUS -> {
+                    updateForNewEvent(ps)
+                    return super.dispatchTouchEvent(ev)
                 }
                 NestEvent.CLICK -> {
                     updateForNewEvent(ps)
+                    super.dispatchTouchEvent(ev)
+                }
+                NestEvent.CONSUMED, NestEvent.CONSUME_CANCEL -> true
+
+                NestEvent.PASS -> {
+                    if (lastClickAvailable) updateForNewEvent(ps)
                     super.dispatchTouchEvent(ev)
                 }
             }
@@ -185,7 +194,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
             consumed[1] += dy
         }
         if (!canScrollVertically(1)) {
-            onScrollToVerticalEnd(dx, dy)
+            onScrollOffsetWhenVerticalEnd(dx, dy)
         }
         return true
     }
@@ -367,8 +376,10 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
      * */
     private fun onFling(velocityX: Float, velocityY: Float) {
         mCurrentFling = 0
-        if (abs(velocityX) > abs(velocityY)) return
-        overScroller.fling(0, 0, 0, velocityY.roundToInt(), Int.MIN_VALUE, Int.MAX_VALUE, Int.MIN_VALUE, Int.MAX_VALUE)
+        when (getOrientation()) {
+            HORIZONTAL -> overScroller.fling(0, 0, velocityX.roundToInt(), 0, Int.MIN_VALUE, Int.MAX_VALUE, Int.MIN_VALUE, Int.MAX_VALUE)
+            VERTICAL -> overScroller.fling(0, 0, 0, velocityY.roundToInt(), Int.MIN_VALUE, Int.MAX_VALUE, Int.MIN_VALUE, Int.MAX_VALUE)
+        }
         invalidate()
     }
 
@@ -477,13 +488,13 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                         mHandler.sendEmptyMessageDelayed(checkSnapPendingCode, 150)
                     }
                     inTouchMode = false;lastRawY = 0f;lastRawX = 0f;lastDy = 0f; downX = 0f;downY = 0f;lastMaskedActionView = -1
-                    return if (curOrientation == getOrientation()) NestEvent.CONSUMED else NestEvent.PASS
+                    return if (curOrientation == getOrientation()) NestEvent.CONSUME_CANCEL else NestEvent.PASS
                 }
             }
         } finally {
             v1.recycle()
         }
-        return NestEvent.PASS
+        return NestEvent.CONSUMED
     }
 
     /**
@@ -506,7 +517,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                 } else {
                     if (target?.canScrollVertically(1) == true) {
                         target.scrollBy(0, dy)
-                        NestEvent.PASS
+                        NestEvent.CONSUMED
                     } else {
                         abortScroller()
                         NestEvent.FOCUS
@@ -516,7 +527,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
             if (dy < 0) {
                 return if (target?.canScrollVertically(-1) == true) {
                     target.scrollBy(0, dy)
-                    NestEvent.PASS
+                    NestEvent.CONSUMED
                 } else {
                     if (super.canScrollVertically(-1)) {
                         scrollBy(0, dy)
@@ -657,6 +668,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
 
         private var mScrollState: Int = SCROLL_STATE_IDLE
         private val mVelocityTracker = VelocityTracker.obtain()
+        private var inMoved = false
 
         init {
             val vc = ViewConfiguration.get(context)
@@ -670,14 +682,20 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
         }
 
         fun onEventDown(event: MotionEvent) {
+            inMoved = false
             addMovement(event)
         }
 
         fun onEventMove(event: MotionEvent) {
+            inMoved = true
             addMovement(event)
         }
 
         fun onEventUp(event: MotionEvent) {
+            if (!inMoved) {
+                resetTouch()
+                return
+            }
             addMovement(event)
             mVelocityTracker.computeCurrentVelocity(1000, mMaxFlingVelocity.toFloat())
             var yVelocity = -mVelocityTracker.yVelocity
@@ -687,7 +705,6 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
             if (xVelocity != 0f || yVelocity != 0f) {
                 onFlingListener(xVelocity, yVelocity)
             }
-            resetTouch()
         }
 
         fun clear() {
@@ -710,9 +727,12 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
 
     /**
      * Override to processing after the nested scroll is completed, such as adding Footer to the NestRecyclerView or [NestScrollerIn]
+     * @param [dx ，dy] The distance changed this time
      * */
-    open fun onScrollToVerticalEnd(dx: Int, dy: Int) {
-        Log.e("------- ", "$dy")
+    open fun onScrollOffsetWhenVerticalEnd(dx: Int, dy: Int) {}
+
+    open fun unConsumedEvent(ne: NestUnConsumedEvent, firstChange: Boolean, event: MotionEvent?): Boolean {
+        return false
     }
 
     /**
@@ -747,12 +767,14 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
      * but there can only be one child control (mainly nested folding control) that continues the recycling mechanism inside.
      * */
     interface NestScrollerIn {
-
         fun getInnerView(): View?
-
     }
 
-    enum class NestEvent {
-        CONSUMED, CLICK, FOCUS, PASS
+    private enum class NestEvent(var outer: NestUnConsumedEvent) {
+        CONSUMED(NestUnConsumedEvent.PASS), CONSUME_CANCEL(NestUnConsumedEvent.PASS), CLICK(NestUnConsumedEvent.CLICK), FOCUS(NestUnConsumedEvent.FOCUS), PASS(NestUnConsumedEvent.PASS)
+    }
+
+    enum class NestUnConsumedEvent {
+        CLICK, FOCUS, PASS
     }
 }

@@ -19,7 +19,7 @@ import com.zj.viewtest.partition.widget.TabComponentFragment
  * Author: ZJJ
  */
 @SuppressLint("ViewConstructor")
-class InfinityComponent(context: Context, override val type: Int) : BaseListVideoComponent(context), com.zj.nest.NestRecyclerView.NestScrollerIn {
+class InfinityComponent(context: Context, override val type: Int) : BaseListVideoComponent(context), NestRecyclerView.NestScrollerIn {
 
     private lateinit var tvComponentTitle: TextView
     private lateinit var rvContent: RecyclerView
