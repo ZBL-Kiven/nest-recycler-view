@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="222dp" />
 
-    <com.zj.viewtest.partition.util.NestLoadMoreRecyclerView
+    <com.zj.nest.NestRecyclerView
         android:id="@+id/channel_main_nrv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

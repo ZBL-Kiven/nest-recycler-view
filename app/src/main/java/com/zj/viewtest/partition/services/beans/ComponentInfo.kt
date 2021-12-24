@@ -14,10 +14,10 @@ class ComponentInfo {
         const val CONTENT_TYPE_ORDINARY = 0
         const val CONTENT_TYPE_DRAMA = 2
 
-        fun createMock(@IntRange(from = 0, to = 4) type: Int, @IntRange(from = 0, to = 2) cType: Int = 0): ComponentInfo {
+        fun createMock(@IntRange(from = 0, to = 4) type: Int, @IntRange(from = 0, to = 2) cType: Int = 0, id: Int): ComponentInfo {
             val mockImg = arrayOf("https://img1.baidu.com/it/u=1035046579,3682814176&fm=15&fmt=auto&gp=0.jpg", "https://img2.baidu.com/it/u=3410596620,2490950622&fm=15&fmt=auto&gp=0.jpg", "https://img1.baidu.com/it/u=1103299328,3966778221&fm=15&fmt=auto&gp=0.jpg")
             return ComponentInfo().apply {
-                id = 129
+                this.id = id
                 partitionId = 112
                 channelId = 12
                 name = "Mock Test"

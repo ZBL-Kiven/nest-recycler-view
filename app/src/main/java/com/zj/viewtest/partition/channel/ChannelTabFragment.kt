@@ -8,19 +8,18 @@ import com.zj.viewtest.R
 import com.zj.viewtest.partition.base.ComponentDelegate
 import com.zj.viewtest.partition.services.api.PartitionApi
 import com.zj.viewtest.partition.services.beans.ChannelInfo
-import com.zj.viewtest.partition.util.NestLoadMoreRecyclerView
 import com.zj.viewtest.partition.widget.NestRecyclerAdapter
 
 open class ChannelTabFragment : BasePartitionTabFragment() {
 
-    private var nestRecyclerView: NestLoadMoreRecyclerView? = null
+    private var nestRecyclerView: com.zj.nest.NestRecyclerView? = null
 
-    override fun getNestRecyclerView(): NestLoadMoreRecyclerView? {
+    override fun getNestRecyclerView(): com.zj.nest.NestRecyclerView? {
         return nestRecyclerView
     }
 
     override fun initData(channelInfo: ChannelInfo?) {
-        val nrv: NestLoadMoreRecyclerView = find(R.id.component_channel_tab_nest_rv) ?: return
+        val nrv: com.zj.nest.NestRecyclerView = find(R.id.component_channel_tab_nest_rv) ?: return
         nestRecyclerView = nrv
         channelInfo?.let { ci ->
             PartitionApi.getComponentByChannelId(ci.channelId) { isSuccess, data, _ ->

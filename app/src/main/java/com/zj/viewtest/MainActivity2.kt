@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.zj.viewtest.partition.base.ComponentDelegate
 import com.zj.viewtest.partition.services.api.PartitionApi
 import com.zj.viewtest.partition.services.beans.ChannelInfo
-import com.zj.viewtest.partition.util.NestLoadMoreRecyclerView
+import com.zj.nest.NestRecyclerView
 import com.zj.viewtest.partition.widget.NestRecyclerAdapter
 
 class MainActivity2 : AppCompatActivity() {
@@ -15,7 +15,7 @@ class MainActivity2 : AppCompatActivity() {
         setContentView(R.layout.act_channel_main)
 
         val ci = ChannelInfo()
-        val nestRecyclerView = findViewById<NestLoadMoreRecyclerView>(R.id.channel_main_nrv)
+        val nestRecyclerView = findViewById<NestRecyclerView>(R.id.channel_main_nrv)
 
         PartitionApi.getComponentByChannelId(ci.channelId) { isSuccess, data, _ ->
             if (isSuccess && !data.isNullOrEmpty()) {

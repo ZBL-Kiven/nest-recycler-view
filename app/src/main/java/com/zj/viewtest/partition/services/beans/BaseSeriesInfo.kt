@@ -3,40 +3,37 @@ package com.zj.viewtest.partition.services.beans
 
 open class BaseSeriesInfo {
 
-    //剧集 ID
+    companion object {
+
+        fun createMock(type: Int): BaseSeriesInfo {
+            return BaseSeriesInfo().apply {
+                this.seriesId = 0
+                this.seriesName = ""
+                this.thumbnail = ""
+                this.description = "Just test for NestRecyclerView"
+                this.episodes = 0
+                this.status = 0
+                this.partitionName = "Some data's title"
+                this.partitionId = 0
+                this.isFavorite = false
+                this.hotData = null
+                this.channelId = 0
+                this.channelName = ""
+            }
+        }
+    }
+
     var seriesId: Int = 0
-
-    //剧集名称
     var seriesName: String? = ""
-
-    // 封面
     var thumbnail: String? = ""
-
-    //简介
     var description: String? = ""
-
-    // 剧集数
     var episodes: Int = 0
-
-    //状态 0连载 1完结
     var status: Int = 0
-
-    //分区名
     var partitionName: String? = ""
-
-    //分区id
     var partitionId: Int = 0
-
-    //是否被收藏
     var isFavorite: Boolean? = false
-
-    //热数据
     var hotData: VideoPartitionHotDataInfo? = null
-
-    //频道ID
     var channelId: Int = 0
-
-    //频道名
     var channelName: String = ""
 
     fun isFinalized(): Boolean {

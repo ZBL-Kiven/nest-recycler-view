@@ -2,11 +2,6 @@ package com.zj.viewtest.partition.services.beans.v
 
 import com.zj.viewtest.partition.services.beans.skeleton.SkeletonAble
 
-/**
- * Author: luzheng
- * Date: 2021/2/5 4:55 PM
- * Description: Global unified banner dynamic configuration
- */
 class BannerConfigBean : SkeletonAble {
 
     /**

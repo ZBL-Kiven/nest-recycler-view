@@ -14,7 +14,7 @@ import com.zj.viewtest.partition.services.beans.ComponentContentInfo
 
 /**
  * Author: ZJJ
- * Description: 适用于 Discover 中 包含 Enter 的短视频组件
+ * Description: Suitable for short video components that include Enter in Discover
  */
 @SuppressLint("ViewConstructor")
 class DiscoverVideoComponent(context: Context, override val type: Int) : BaseListVideoComponent(context) {

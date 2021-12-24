@@ -2,15 +2,15 @@ package com.zj.viewtest
 
 import android.annotation.SuppressLint
 import com.zj.cf.fragments.BaseTabFragment
+import com.zj.nest.NestRecyclerView
 import com.zj.viewtest.partition.services.beans.ChannelInfo
-import com.zj.viewtest.partition.util.NestLoadMoreRecyclerView
 
 abstract class BasePartitionTabFragment : BaseTabFragment() {
 
     private var channelInfo: ChannelInfo? = null
     private var pendingScrollEvent: Int = 0
 
-    abstract fun getNestRecyclerView(): NestLoadMoreRecyclerView?
+    abstract fun getNestRecyclerView(): NestRecyclerView?
 
     abstract fun initData(channelInfo: ChannelInfo?)
 

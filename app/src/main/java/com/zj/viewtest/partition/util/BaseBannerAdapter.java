@@ -22,10 +22,6 @@ public class BaseBannerAdapter extends BannerAdapter<BannerConfigBean, BaseBanne
 
     private int width = 0, height = 0;
 
-    public BaseBannerAdapter(List<BannerConfigBean> mData) {
-        super(mData);
-    }
-
     public BaseBannerAdapter(List<BannerConfigBean> mData, int width, int height) {
         super(mData);
         this.width = width;

@@ -12,7 +12,6 @@ class ComponentContentInfo : SkeletonAble {
     //Episode Introduction
     var seriesRespEn: BaseSeriesInfo? = null
 
-    //0 Ordinary video 1 Short drama collection data 2 Drama collection data
     var dataType: Int = 0
 
     var inSkeletonShow: Boolean = false

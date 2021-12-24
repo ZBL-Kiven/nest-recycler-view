@@ -15,7 +15,7 @@
 <!--</com.zj.viewtest.partition.util.nest.NestScrollView>-->
 
 
-<com.zj.viewtest.partition.util.NestLoadMoreRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zj.nest.NestRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/component_channel_tab_nest_rv"
     android:layout_width="match_parent"

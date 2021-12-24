@@ -13,11 +13,11 @@ import com.zj.nest.NestRecyclerView
 import java.lang.NullPointerException
 
 
-class NestRecyclerAdapter(private val rv: com.zj.nest.NestRecyclerView?, viewBuilder: ViewBuilder) : BaseAdapter<ComponentInfo>(viewBuilder) {
+class NestRecyclerAdapter(private val rv: NestRecyclerView?, viewBuilder: ViewBuilder) : BaseAdapter<ComponentInfo>(viewBuilder) {
 
     companion object {
 
-        fun <T : com.zj.nest.NestRecyclerView> create(rv: T?): NestRecyclerAdapter {
+        fun <T : NestRecyclerView> create(rv: T?): NestRecyclerAdapter {
             return NestRecyclerAdapter(rv, ViewBuilder { p, _, viewType ->
                 return@ViewBuilder if (rv == null || !validType(viewType)) {
                     if (BuildConfig.DEBUG) throw NullPointerException("rv = $rv   && type  = $viewType  is illegal") else p
@@ -50,7 +50,7 @@ class NestRecyclerAdapter(private val rv: com.zj.nest.NestRecyclerView?, viewBui
                     }
                     c.hideEndingLine(position == data.indexOfLast { !isInfinityComponent })
                     if (ComponentDelegate.isInfinityComponent(c.type)) {
-                        rv.withNestIn(c as? com.zj.nest.NestRecyclerView.NestScrollerIn)
+                        rv.withNestIn(c as? NestRecyclerView.NestScrollerIn)
                     }
                 }
             }

@@ -39,11 +39,6 @@ class BannerComponent constructor(context: Context, override val type: Int) : Ba
         }
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        Log.e("------ ", "11111  ==>  ${ev?.action} ")
-        return super.dispatchTouchEvent(ev)
-    }
-
     override fun onPaused() {
         banner?.stop()
         super.onPaused()

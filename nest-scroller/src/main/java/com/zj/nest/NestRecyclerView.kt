@@ -566,6 +566,8 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                     }
                 }
             }
+        } else {
+            return NestEvent.CONSUMED
         }
         return NestEvent.PASS
     }
@@ -772,6 +774,39 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
     open fun onScrollOffsetWhenVerticalEnd(dx: Int, dy: Int) {}
 
     open fun unConsumedEvent(ne: NestUnConsumedEvent, firstChange: Boolean, event: MotionEvent?): Boolean {
+        when (ne) {
+            NestUnConsumedEvent.FOCUS -> getNestedChild()?.let {
+                val parent = it.parent
+                val dispatch: Boolean
+                if (parent !is ViewGroup) return false
+                if (parent != this) {
+                    if (firstChange) {
+                        val v1 = MotionEvent.obtainNoHistory(event)
+                        v1.action = MotionEvent.ACTION_CANCEL
+                        val v2 = MotionEvent.obtainNoHistory(event)
+                        v2.action = MotionEvent.ACTION_DOWN
+                        parent.dispatchTouchEvent(v1)
+                        dispatch = parent.dispatchTouchEvent(v2)
+                        v1.recycle()
+                        v2.recycle()
+                    } else dispatch = parent.dispatchTouchEvent(event)
+                    return dispatch
+                }
+            }
+            NestUnConsumedEvent.PASS -> {
+                if (event?.action == MotionEvent.ACTION_UP || event?.action == MotionEvent.ACTION_CANCEL) {
+                    getNestedChild()?.let {
+                        val parent = it.parent
+                        if (parent != this) {
+                            event.action = MotionEvent.ACTION_CANCEL
+                            post { (parent as? ViewGroup)?.dispatchTouchEvent(event) }
+                        }
+                    }
+                }
+            }
+            else -> {
+            }
+        }
         return false
     }
 

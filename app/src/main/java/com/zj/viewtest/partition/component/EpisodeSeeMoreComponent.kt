@@ -12,7 +12,7 @@ import com.zj.viewtest.partition.services.beans.ComponentContentInfo
 
 /**
  * Author: ZJJ
- * Description: 适用于 头部为 SeeMore 的短视频组件
+ * Description: Suitable for short video components with SeeMore head
  */
 @SuppressLint("ViewConstructor")
 class EpisodeSeeMoreComponent(context: Context, override val type: Int) : BaseListVideoComponent(context) {
