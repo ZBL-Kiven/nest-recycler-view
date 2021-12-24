@@ -2,6 +2,7 @@ package com.zj.nest
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.PointF
 import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
@@ -17,8 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.AppBarLayout
-import com.zj.nest.NestRecyclerView.NestHeaderIn
-import com.zj.nest.NestRecyclerView.NestScrollerIn
+import com.zj.nest.NestRecyclerView.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -27,7 +27,9 @@ import kotlin.math.roundToInt
  * Created by Zjj on 21.7.7
  *
  * Recyclable components used to support multiple nested sliding.
- * It must be set to [NestScrollerIn] through the [withNestIn] method to mark an inline recyclable list of unlimited length.
+ * Set any View that needs nested sliding as an inline sliding component,
+ * call [withNestIn], this function needs to pass a [NestScrollerIn].
+ *
  * @see [getNestedChild]. Of course the inline view should be a [androidx.core.view.NestedScrollingChild].
  * The Wrapper of this view is not subject to any restrictions.
  *
@@ -39,25 +41,25 @@ import kotlin.math.roundToInt
  *
  * It just a RecyclerView, and then set other View in Child that need nested scrolling through [withNestIn].
  * To set the linkage header, directly include the corresponding header View in the XML or ViewTree
+ *
+ *
  * */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class NestRecyclerView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, def: Int = 0) : RecyclerView(context, attributeSet, def) {
 
-    var overScrollerDispatchToParent: Boolean = true
-    private var mMinFlingVelocity = 0
-    private var mMaxFlingVelocity = 0
-    private var mTouchSlop = 0
-    private var lastRawX = 0f
-    private var lastRawY = 0f
     private var downX = 0f
     private var downY = 0f
     private var lastDy = 0f
-    private var curOrientation = -1
+    private var lastRawX = 0f
+    private var lastRawY = 0f
+    private var mTouchSlop = 0
     private var mCurrentFling = 0
+    private var mMinFlingVelocity = 0
+    private var mMaxFlingVelocity = 0
+    private var lastMaskedActionView = -1
+    private var lastFocusMod = NestEvent.PASS
     private var checkSnapPendingCode = 0x1122d
     private val parentScrollConsumed = IntArray(2)
-    private var lastFocusMod = NestEvent.PASS
-    private var lastMaskedActionView = -1
     private var inTouchMode = false
     private var hasScrollTag = false
     private var nestHeader: View? = null
@@ -68,13 +70,19 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
     private var interceptNextEvent: Boolean? = null
     private var nestScrollerIn: NestScrollerIn? = null
     private var needRefreshDownIndexByPointerChange = false
+    private var curOrientation = TouchOrientation(-1, 0)
     private val overScroller = OverScroller(context, LinearInterpolator())
     private var overScrollerFilling = ViewScrollerTouchListener(::onFling)
     private var headerOffsetChangedListener: HeaderOffsetChangedListener? = null
     private var mHandler = Handler(Looper.getMainLooper()) {
-        if (it.what == checkSnapPendingCode) checkPendingSnapEvent(lastDy)
+        if (it.what == checkSnapPendingCode) checkPendingSnapEvent()
         return@Handler false
     }
+
+    /**
+     * is detection of [NestHeaderIn] linkage?
+     * */
+    var overScrollerDispatchToParent: Boolean = true
 
     @SuppressLint("ClickableViewAccessibility")
     /**
@@ -141,20 +149,32 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
      * */
     final override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
 
-        fun updateForNewEvent(ps: NestEvent) {
-            if (lastFocusMod != ps) {
-                val ev1 = MotionEvent.obtainNoHistory(ev)
+        fun updateForNewEvent(ps: NestEvent): Boolean {
+            return if (lastFocusMod != ps) {
+                val ev1 = MotionEvent.obtain(ev)
                 ev1.action = MotionEvent.ACTION_CANCEL
                 super.dispatchTouchEvent(ev1)
-                val ev2 = MotionEvent.obtainNoHistory(ev)
+                val ev2 = MotionEvent.obtain(ev)
                 ev2.action = MotionEvent.ACTION_DOWN
                 super.dispatchTouchEvent(ev2)
                 ev1.recycle()
                 ev2.recycle()
-            }
+                false
+            } else true
         }
 
         val ps = dispatchEvent(ev ?: return super.dispatchTouchEvent(ev), hashCode())
+        curOrientation.run {
+            val v = findChildViewUnder(ev.x, ev.y)
+            val childEnabled = checkChildScrollAble(v, PointF(ev.x, ev.y))
+            val dis = if (childEnabled == null) {
+                parent?.requestDisallowInterceptTouchEvent(true)
+                true
+            } else {
+                childEnabled.first || ps == NestEvent.CONSUMED || ps == NestEvent.FOCUS
+            }
+            parent?.requestDisallowInterceptTouchEvent(dis)
+        }
         return try {
             if (ps != NestEvent.CONSUMED && unConsumedEvent(ps.outer, lastFocusMod != ps, ev)) {
                 return true
@@ -162,7 +182,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
             when (ps) {
                 NestEvent.FOCUS -> {
                     updateForNewEvent(ps)
-                    return super.dispatchTouchEvent(ev)
+                    super.dispatchTouchEvent(ev)
                 }
                 NestEvent.CLICK -> {
                     updateForNewEvent(ps)
@@ -171,8 +191,16 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                 NestEvent.CONSUMED, NestEvent.CONSUME_CANCEL -> true
 
                 NestEvent.PASS -> {
-                    if (lastClickAvailable) updateForNewEvent(ps)
-                    super.dispatchTouchEvent(ev)
+                    if (updateForNewEvent(ps)) {
+                        super.dispatchTouchEvent(ev)
+                    } else false
+                }
+                NestEvent.PASS_CANCEL -> {
+                    val ev1 = MotionEvent.obtainNoHistory(ev)
+                    ev1.action = MotionEvent.ACTION_UP
+                    val r = super.dispatchTouchEvent(ev1)
+                    ev1.recycle()
+                    if (r) return true else super.dispatchTouchEvent(ev)
                 }
             }
         } finally {
@@ -432,7 +460,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
             when (ev.action) {
                 MotionEvent.ACTION_DOWN -> {
                     downX = v1.x;downY = v1.y;lastRawX = v1.x; lastRawY = v1.y; lastDy = 0f;interceptNextEvent = true
-                    curOrientation = -1
+                    curOrientation.reset()
                     overScrollerFilling.onEventDown(v1)
                     return NestEvent.CONSUMED
                 }
@@ -448,22 +476,22 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                     val dy: Float
                     if (getOrientation() == VERTICAL) {
                         if (sameOrientation) {
-                            dx = -v1.x;dy = 0f
+                            dx = -v1.x + lastRawX;dy = 0f
                         } else {
-                            dx = 0f;dy = -v1.y
+                            dx = 0f;dy = -v1.y + lastRawY
                         }
                     } else {
                         if (sameOrientation) {
-                            dx = 0f;dy = -v1.y
+                            dx = 0f;dy = -v1.y + lastRawY
                         } else {
-                            dx = -v1.x;dy = 0f
+                            dx = -v1.x + lastRawX;dy = 0f
                         }
                     }
                     v1.offsetLocation(dx, dy)
                     if (!sameOrientation) {
                         return NestEvent.PASS
                     }
-                    if (curOrientation != -1) {
+                    if (!curOrientation.isEmpty()) {
                         lastClickAvailable = false
                         try {
                             lastDy = lastRawY - v1.y
@@ -478,7 +506,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                     }
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (curOrientation == -1 && max(abs(downX - lastRawX), abs(downY - lastRawY)) < mTouchSlop) {
+                    if (curOrientation.isEmpty() && max(abs(downX - lastRawX), abs(downY - lastRawY)) < mTouchSlop) {
                         overScrollerFilling.clear()
                         return if (lastClickAvailable) NestEvent.CLICK else NestEvent.CONSUMED
                     }
@@ -488,7 +516,7 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                         mHandler.sendEmptyMessageDelayed(checkSnapPendingCode, 150)
                     }
                     inTouchMode = false;lastRawY = 0f;lastRawX = 0f;lastDy = 0f; downX = 0f;downY = 0f;lastMaskedActionView = -1
-                    return if (curOrientation == getOrientation()) NestEvent.CONSUME_CANCEL else NestEvent.PASS
+                    return if (curOrientation.orientation == getOrientation()) NestEvent.CONSUME_CANCEL else NestEvent.PASS_CANCEL
                 }
             }
         } finally {
@@ -546,16 +574,27 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
      * In a single Touch event, the directional sliding distance > [ViewConfiguration.getScaledTouchSlop] is met for the first time
      * */
     private fun parseCurOrientation(stepX: Float, stepY: Float): Boolean {
-        val ax = abs(stepX)
-        val ay = abs(stepY)
-        return if (curOrientation == -1 && ax < mTouchSlop && ay < mTouchSlop) {
-            true
-        } else if (curOrientation == -1) {
-            val o = if (ax > ay) HORIZONTAL else VERTICAL
-            curOrientation = o; o == getOrientation()
-        } else {
-            curOrientation == getOrientation()
+        val absX = abs(stepX)
+        val absY = abs(stepY)
+
+        if (curOrientation.isEmpty() && absX < mTouchSlop && absY < mTouchSlop) {
+            return true
+        } else if (curOrientation.isEmpty()) {
+            if (absX > absY) {
+                if (stepX > 0) {
+                    curOrientation.set(HORIZONTAL, 1)
+                } else {
+                    curOrientation.set(HORIZONTAL, -1)
+                }
+            } else {
+                if (stepY > 0) {
+                    curOrientation.set(VERTICAL, 1)
+                } else {
+                    curOrientation.set(VERTICAL, -1)
+                }
+            }
         }
+        return curOrientation.orientation == getOrientation()
     }
 
     /**
@@ -635,8 +674,8 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
      * When ScrollFlags is contains [AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP], after stop touching or scrolling,
      * the [nestHeader] will automatically expand or collapse based on distance
      * */
-    private fun checkPendingSnapEvent(dy: Float = 0f) {
-        if (inTouchMode) return
+    private fun checkPendingSnapEvent() {
+        if (inTouchMode || curOrientation.orientation == HORIZONTAL) return
         if (!isNestHeaderExpand() && !isNestHeaderFold()) {
             val offset = getScrolledOffset()
             if (offset == 0) return
@@ -649,8 +688,9 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
                     overScroller.startScroll(0, 0, 0, d, 500)
                     computeScroll()
                 } else {
-                    if (dy == 0f) return
-                    overScroller.startScroll(0, 0, 0, if (dy < 0) -offset else offset, 500)
+                    if (curOrientation.isEmpty()) return
+                    val isToUp = curOrientation.gravity < 0
+                    overScroller.startScroll(0, 0, 0, if (isToUp) -offset else offset, 500)
                     computeScroll()
                 }
             }
@@ -771,10 +811,51 @@ open class NestRecyclerView @JvmOverloads constructor(context: Context, attribut
     }
 
     private enum class NestEvent(var outer: NestUnConsumedEvent) {
-        CONSUMED(NestUnConsumedEvent.PASS), CONSUME_CANCEL(NestUnConsumedEvent.PASS), CLICK(NestUnConsumedEvent.CLICK), FOCUS(NestUnConsumedEvent.FOCUS), PASS(NestUnConsumedEvent.PASS)
+        CONSUMED(NestUnConsumedEvent.PASS), CONSUME_CANCEL(NestUnConsumedEvent.PASS), CLICK(NestUnConsumedEvent.CLICK), FOCUS(NestUnConsumedEvent.FOCUS), PASS(NestUnConsumedEvent.PASS), PASS_CANCEL(NestUnConsumedEvent.PASS)
     }
 
     enum class NestUnConsumedEvent {
         CLICK, FOCUS, PASS
+    }
+
+    private data class TouchOrientation(var orientation: Int, var gravity: Int) {
+        fun reset() {
+            orientation = -1;gravity = 0
+        }
+
+        fun set(orientation: Int, gravity: Int) {
+            this.orientation = orientation
+            this.gravity = gravity
+        }
+
+        fun isEmpty(): Boolean {
+            return orientation == -1
+        }
+
+        fun checkOrContinue(v: View?, p: PointF, checked: Boolean): Pair<Boolean, View?> {
+            return if (checked) Pair(true, v) else {
+                (v as? ViewGroup)?.let {
+                    repeat(it.childCount) { i ->
+                        val child = it.getChildAt(i)
+                        if (child.visibility == VISIBLE) {
+                            val r = Rect()
+                            child.getLocalVisibleRect(r)
+                            if (r.contains(p.x.roundToInt(), p.y.roundToInt())) {
+                                return@checkOrContinue checkChildScrollAble(child, p) ?: Pair(false, null)
+                            }
+                        }
+                    }
+                }
+                return Pair(false, null)
+            }
+        }
+
+        fun checkChildScrollAble(v: View?, p: PointF): Pair<Boolean, View?>? {
+            return when (orientation) {
+                HORIZONTAL -> checkOrContinue(v, p, v?.canScrollHorizontally(gravity) == true)
+                VERTICAL -> Pair(false, null)
+                else -> null
+            }
+        }
     }
 }

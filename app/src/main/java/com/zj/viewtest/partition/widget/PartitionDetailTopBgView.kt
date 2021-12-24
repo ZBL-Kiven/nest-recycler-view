@@ -12,19 +12,13 @@ import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
 import com.google.android.material.appbar.AppBarLayout
-import com.zj.nest.NestRecyclerView
 
 class PartitionDetailTopBgView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, def: Int = 0) : AppCompatImageView(context, attributeSet, def), com.zj.nest.NestRecyclerView.NestHeaderIn {
 
-    private val totalScrollRange = DPUtils.dp2px(330f)
+    private val totalScrollRange = DPUtils.dp2px(160f)
     private var expandListener: ((Boolean?, Float) -> Unit)? = null
     private var curScrolled: Int = 0
     var scrollAble = { true }
-
-    override fun performClick(): Boolean {
-        Log.e("-------", "======= CLICK TOP BAR =======")
-        return super.performClick()
-    }
 
     fun scrollToExpand() {
         (parent as? ViewGroup)?.scrollTo(0, 0)

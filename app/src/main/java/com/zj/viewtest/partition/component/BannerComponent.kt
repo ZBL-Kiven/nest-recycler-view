@@ -3,6 +3,8 @@ package com.zj.viewtest.partition.component
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
+import android.view.MotionEvent
 import androidx.lifecycle.LifecycleOwner
 import com.youth.banner.Banner
 import com.youth.banner.indicator.CircleIndicator
@@ -35,6 +37,11 @@ class BannerComponent constructor(context: Context, override val type: Int) : Ba
             banner?.setCurrentItem(0, false)
             banner?.start()
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        Log.e("------ ", "11111  ==>  ${ev?.action} ")
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onPaused() {

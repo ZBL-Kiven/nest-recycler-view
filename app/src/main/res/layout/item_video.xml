@@ -16,14 +16,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearance="@style/Normal_12_ImageView" />
+        app:shapeAppearance="@style/Normal_12_ImageView"
+        app:strokeColor="#cca"
+        app:strokeWidth="1dp" />
 
     <View
         android:id="@+id/item_video_mask"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="gone"
         android:background="@drawable/component_item_mask"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/item_video_thumb"
         app:layout_constraintEnd_toEndOf="@id/item_video_thumb"
         app:layout_constraintStart_toStartOf="@id/item_video_thumb"

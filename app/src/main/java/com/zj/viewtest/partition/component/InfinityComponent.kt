@@ -38,11 +38,6 @@ class InfinityComponent(context: Context, override val type: Int) : BaseListVide
         getData(false)
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        Log.e("------ ", "dispatchTouchEvent  ===> ${ev?.action}")
-        return super.dispatchTouchEvent(ev)
-    }
-
     fun setPageTypeInfo(pageType: TabComponentFragment.TabTypeInfo?) {
         this.pageType = pageType
     }

@@ -2,6 +2,7 @@ package com.zj.viewtest
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout

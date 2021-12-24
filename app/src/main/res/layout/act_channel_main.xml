@@ -22,7 +22,7 @@
 
     <com.zj.viewtest.partition.widget.PartitionDetailTopBgView
         android:layout_width="match_parent"
-        android:layout_height="422dp" />
+        android:layout_height="222dp" />
 
     <com.zj.viewtest.partition.util.NestLoadMoreRecyclerView
         android:id="@+id/channel_main_nrv"

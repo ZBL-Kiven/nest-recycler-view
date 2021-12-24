@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Normal_8_ImageView">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">8dp</item>
-    </style>
-
     <style name="Normal_12_ImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">12dp</item>

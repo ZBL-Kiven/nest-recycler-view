@@ -17,7 +17,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearance="@style/Normal_12_ImageView" />
+        app:shapeAppearance="@style/Normal_12_ImageView"
+        app:strokeColor="#cca"
+        app:strokeWidth="1dp" />
 
     <View
         android:id="@+id/item_episodes_mask"
